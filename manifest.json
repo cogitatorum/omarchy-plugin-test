@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "id": "havok.screen",
+  "name": "Screen Mirror",
+  "version": "1.0.0",
+  "author": "Havok",
+  "license": "MIT",
+  "description": "",
+  "kinds": ["overlay"],
+  "entryPoints": { "overlay": "Overlay.qml" },
+  "overlay": {
+    "displayName": "Havok Screen",
+    "category": "Desktop Overlay",
+    "allowMultiple": true,
+    "defaultSection": "center"
+  }
+}
