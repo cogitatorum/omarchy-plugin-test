@@ -1,3 +1,4 @@
+import QtQml
 import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
@@ -15,6 +16,7 @@ Item {
     property string bg: "white"
     property string fg: "black"
     property string homeDir: Quickshell.env("HOME")
+    property K8sEvent lastEvent
 
     function open(payloadJson) {
         closingFromHost = false;
@@ -40,6 +42,20 @@ Item {
         }
 
         target: (root.manifest && root.manifest.id) || "havok.screen"
+    }
+
+    Process {
+        command: ["fish", "-c", "kubectl -A get events -o json | jq '.items | sort_by(.lastTimestamp) | reverse | limit(1; .[])'"]
+        Component.onCompleted: () => {
+            this.running = true;
+        }
+
+        stdout: StdioCollector {
+            onStreamFinished: () => {
+                root.lastEvent.fromJson(JSON.parse(this.text));
+            }
+        }
+
     }
 
     FloatingWindow {
@@ -97,12 +113,22 @@ Item {
                 FlatButton {
                     bg: root.bg
                     fg: root.fg
+                    txt: "Ok"
+                    preferredWidth: 100
+                    onPressed: () => {
+                    }
                 }
 
             }
 
         }
 
+    }
+
+    lastEvent: K8sEvent {
+        onLoaded: () => {
+            console.log(this.metadata.name);
+        }
     }
 
 }
